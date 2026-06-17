@@ -10,10 +10,23 @@ repositories {
 }
 
 dependencies {
-    implementation("org.seleniumhq.selenium:selenium-java:4.26.0")
-    implementation("org.testng:testng:7.11.0")
+    implementation 'org.seleniumhq.selenium:selenium-java:4.26.0'
+    implementation 'org.testng:testng:7.11.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.46'
+    annotationProcessor 'org.projectlombok:lombok:1.18.46'
+    testCompileOnly 'org.projectlombok:lombok:1.18.46'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.46'
+
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
 }
 
 test {
     useTestNG()
+}
+
+tasks.register('smoketests', Test) {
+    useTestNG() {
+        suites 'src/test/resources/smokeTests.xml'
+    }
 }

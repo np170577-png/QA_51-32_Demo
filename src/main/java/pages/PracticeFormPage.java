@@ -3,14 +3,16 @@ package pages;
 import dto.Student;
 import enums.Gender;
 import enums.Hobbies;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 public class PracticeFormPage extends BasePage {
@@ -42,13 +44,16 @@ public class PracticeFormPage extends BasePage {
     WebElement inputSubjects;
 
     @FindBy(xpath = "//input[@id='react-select-3-input']")
-    WebElement state;
+    WebElement inputState;
 
     @FindBy(xpath = "//input[@id='react-select-4-input']")
-    WebElement city;
+    WebElement inputCity;
 
     @FindBy(xpath = "//button[text()='Submit']")
     WebElement btnSubmit;
+
+    @FindBy(id = "example-modal-sizes-title-lg")
+    WebElement message;
 
     public void typePracticeForm(Student student) {
         inputFirstName.sendKeys(student.getFirstName());
@@ -60,12 +65,32 @@ public class PracticeFormPage extends BasePage {
         typeSubjects(student.getSubjects());
         typeHobbies(student.getHobbies());
         textAreaAddress.sendKeys(student.getAddress());
-
+        typeStateCity(student.getState(), student.getCity());
+        //scrollToElement(btnSubmit);
+        scrollActions();
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(btnSubmit));
+        btnSubmit.click();
     }
 
-    private void typeHobbies(List<Hobbies> hobbies){
-        for (Hobbies h:hobbies){
-            switch (h){
+    public boolean validateMessage() {
+        return isTextElementValid(message, "Thanks for submitting the form");
+    }
+
+    public boolean validateMessageNegative() {
+        return isTextElementValid(message, "Wrong");
+    }
+
+    private void typeStateCity(String state, String city) {
+        inputState.sendKeys(state);
+        inputState.sendKeys(Keys.ENTER);
+
+        inputCity.sendKeys(city);
+        inputCity.sendKeys(Keys.ENTER);
+    }
+
+    private void typeHobbies(List<Hobbies> hobbies) {
+        for (Hobbies h : hobbies) {
+            switch (h) {
                 case MUSIC:
                     driver.findElement(By.id(h.getLocator())).click();
                     break;
@@ -83,7 +108,7 @@ public class PracticeFormPage extends BasePage {
     private void typeSubjects(String subjects) {
         inputSubjects.click();
         String[] strArr = subjects.trim().split(","); // [,]{1}\\s+
-        for (String s: strArr){
+        for (String s : strArr) {
             inputSubjects.sendKeys(s);
             inputSubjects.sendKeys(Keys.ENTER);
         }
@@ -109,6 +134,23 @@ public class PracticeFormPage extends BasePage {
         inputDateOfBirth.sendKeys(dateOfBirth);
         inputDateOfBirth.sendKeys(Keys.ENTER);
 
+    }
+
+//    public void scrollToElement(WebElement element) {
+//        JavascriptExecutor js = (JavascriptExecutor) driver;
+//        js.executeScript("arguments[0].scrollIntoView(true)", element);
+//    }
+    public void scrollActions(){
+        Actions actions = new Actions(driver);
+
+        for (int i = 0; i < 10; i++) {
+            actions.scrollByAmount(0, 700).perform();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
 
