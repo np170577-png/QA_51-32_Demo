@@ -24,7 +24,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Build with Gradle Wrapper
-        run: ./gradlew clean smoke_tests
+        run: ./gradlew clean smoketests
       - name: Upload Test Reports
         if: always()
         uses: actions/upload-artifact@v4
